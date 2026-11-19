@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="logo-title logo-description">
+  <title id="logo-title">IT Skills Lab</title>
+  <desc id="logo-description">結合電子電路與標靶意象的資訊能力測驗標誌。</desc>
+  <defs>
+    <mask id="center-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
+      <rect width="512" height="512" fill="#ffffff"/>
+      <circle cx="256" cy="256" r="30" fill="#000000"/>
+    </mask>
+  </defs>
+  <g mask="url(#center-cutout)">
+    <path d="M 466.387 191.678 A 220 220 0 0 1 95.102 406.04" fill="none" stroke="#2aa8d5" stroke-width="52"/>
+    <path d="M 45.613 320.322 A 220 220 0 0 1 416.898 105.96" fill="none" stroke="#2aa8d5" stroke-width="52"/>
+    <circle data-ink="true" cx="256" cy="256" r="144" fill="none" stroke="#333333" stroke-width="28"/>
+    <circle cx="256" cy="256" r="130" fill="#2aa8d5"/>
+    <path  d="M 65.474 366 L 446.526 146" fill="none" stroke="#2aa8d5" stroke-width="48"/>
+    <circle data-ink="true" cx="256" cy="256" r="46" fill="none" stroke="#333333" stroke-width="32"/>
+  </g>
+</svg>

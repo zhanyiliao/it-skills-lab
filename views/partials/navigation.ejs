@@ -1,0 +1,8 @@
+<%
+const mode = typeof navigationMode === 'undefined' ? 'primary' : navigationMode;
+const learning = [['/','home','首頁'],['/exams','book','開始測驗'],['/leaderboard','trophy','排行榜']];
+const management = [...(hasRole(user,1) ? [['/questions','grid','題庫管理']] : []),...(hasRole(user,2) ? [['/members','users','會員管理'],['/statistics','chart','統計數據']] : [])];
+const items = mode === 'management' ? management : mode === 'mobile' ? [...learning,['/about','info','關於測驗'],...management] : learning;
+%>
+<% for(const [url,name,label] of items) { const active = url === '/' ? path === '/' : path === url || (url === '/exams' && path.startsWith('/exams/')); %>
+<a href="<%= url %>" class="nav-link <%= active ? 'is-active' : '' %>" <% if(active) { %>aria-current="page"<% } %>><%- icon(name) %><span><%= label %></span></a><% } %>

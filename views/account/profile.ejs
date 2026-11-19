@@ -1,0 +1,10 @@
+<div class="profile-banner"><img class="avatar" src="<%= avatar(member) %>" alt="<%= member.username %> 的頭像"><div><h2><%= ownProfile ? member.username+'，歡迎回來。' : member.username %></h2><p><%= identity(member.identity) %></p><span class="badge"><%= roleName(member) %></span></div><% if(ownProfile){ %><a class="button button-ghost" href="/settings/profile"><%- icon('settings') %> 帳號設定</a><% } %></div>
+<div class="metric-grid">
+<div class="metric-card"><span>正式測驗最高成績</span><strong><%= member.exam_count||member.high_score>0 ? formatScore(member.high_score) : '—' %><small>分</small></strong><p>總排行第 <%= highRank %> 名</p></div>
+<div class="metric-card"><span>上次正式測驗</span><strong><%= member.exam_count ? formatScore(member.last_score) : '—' %><small>分</small></strong><p><%= member.exam_count ? '即時排行第 '+lastRank+' 名' : '完成正式測驗後顯示' %></p></div>
+<div class="metric-card"><span><%= ownProfile?'我的學習身分':'學習身分' %></span><strong style="font-size:23px"><%= roleName(member) %></strong><p>在練習中，慢慢變得更有把握。</p></div>
+</div>
+<% if(ownProfile){ %>
+<div class="feature-grid account-actions"><a class="action-card" href="/results/latest"><span class="icon-tile mint"><%- icon('document') %></span><h3>成績與檢討</h3><p>回顧作答，找到可以進步的地方。</p><span class="card-link">查看成績與檢討 <%- icon('arrow') %></span></a></div>
+<% if(hasRole(user,1)){ %><section class="surface-card account-workspace"><h2>管理工作台</h2><div class="actions"><a href="/questions">題庫管理</a><% if(hasRole(user,2)){ %><a href="/members">會員管理</a><a href="/statistics">統計數據</a><% } %></div></section><% } %>
+<% } %>

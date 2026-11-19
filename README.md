@@ -1,63 +1,46 @@
-# ITmockTest
+# IT Skills Lab
 
-## Project Overview
-**ITmockTest** is an internal mock examination system developed using **PHP**, **SQL**, and **HTML/CSS**, with database management via **phpMyAdmin**. The project was developed by a team of three as part of a school internal system initiative. 
+以 Node.js 24、Express 5、EJS 與 MariaDB 建立的資訊能力練習室。
 
-The purpose of this system is to assist students in preparing for the **Information Technology Basic Competency Certification**, which is a graduation requirement at our institution. The school provides PDF and DOC format question banks covering five core subjects. This system allows students to efficiently identify knowledge gaps while simulating real exam conditions.
+## 本機啟動
 
-The web application is divided into **User** and **Administrator** modules. Users can simulate full exams, practice specific subjects, review their scores, access real-time leaderboards, and track performance in each subject. Administrators can manage both the question bank and user accounts.
+執行 `start-local.cmd`，或參考 [本機設定](LOCAL_SETUP.md)。網站預設位於 http://127.0.0.1:8080，資料庫使用 3307 連接埠。初次啟動會建立資料表並匯入 400 題；既有資料庫不會重新匯入或重設使用者。
 
----
+`node src/setup.js --demo` 僅在帳號不存在時建立本機管理者：`localadmin / LocalDemo2026!`。公開部署時請自行設定資料庫、SESSION_SECRET、HTTPS 與管理者密碼，勿沿用示範憑證。
 
-## Frontend Architecture
+## 測驗與檢討
 
-1. **User Interface (UI)**  
-   - Built with **HTML** and **CSS**. PHP files generate the page structure, and `des.css` defines consistent styling for a professional and user-friendly interface.
+- 八個題庫：計算機系統、網際網路與通訊、資訊安全、數位素養與資訊倫理、辦公軟體應用、程式設計、專案管理、人工智慧應用。
+- 練習測驗從 `questions` 中已通過檢核的題目抽選，支援 10／25／50 題，各選取題庫的題數相差最多一題；不等待 AI 生成，不列入正式成績。
+- 正式測驗固定涵蓋八科共 50 題，各科先分配題數，再分配既有題與新題，總計 30 題資料庫題＋20 題 AI 新題。新題避開抽中題目的細節考點，經獨立內容審查後才開卷；合法交卷時，新題與正式成績於同一交易寫入資料庫。
+- 難度為 1～9 星，以 4 星為中心、標準差 1.5 的離散截斷常態權重抽選。測驗時不顯示難度，檢討時即時計算浮動難度，以十顆星的比例填色搭配兩位小數顯示難度及解析。浮動幅度小於 0.99 星，成績與抽題仍使用初始難度。
+- 正式與練習依題目難度加權：答對題目的星等總和 ÷ 全卷星等總和 × 100，四捨五入至兩位小數，滿分 100.00。正式成績達 60.00 分且耗時不超過 90 分鐘為合格。歷史查詢、最近成績與即時排行會依題目 ID 即時計算加權分數。最高分存於 `user.high_score`；正式交卷於同一交易中以較高分更新，不回掃全部歷史。
+- 重新整理保留同一份考卷、答案與計時；切換分頁不交卷。離開作答頁、登出或重新開始會先結算，未作答算錯。瀏覽器離頁通知有寬限與斷線補結算。
+- 練習檢討保留一小時，入口位於本人的「成績與檢討」；正式紀錄可持續檢討，提供八科作答表現與最近五次成績。
+- 每日一題在作答前顯示與檢討頁相同的十星浮動難度，使用同一份新版題庫；當天正式測驗入庫的新題從隔天起加入每日一題候選。
 
-2. **Frontend Interactivity**  
-   - Implemented with **JavaScript** using **jQuery** to enhance dynamic behavior:
-     - **Real-time search/filtering**: Dynamically updates user lists based on input.  
-     - **Confirmation dialogs**: Prevents accidental edits or deletions.  
-     - **Dynamic content updates**: AJAX is used to update page sections without full reloads.
+個人主頁統一位於 `/account/使用者編號`，公開呈現成績與排名；本人查看時另有成績檢討、帳號設定及依權限顯示的管理工作台；成績檢討也可由頭像選單進入。
 
-3. **Pages and Components**  
-   - `index.php`: Entry point, redirects to `homepage.php`.  
-   - `homepage.php`: Main navigation hub; login modal appears if users attempt to start an exam before signing in.  
-   - `about.php`: Introduces system purpose, development background, and source of questions.  
-   - `choose.php`: Allows selection of a full exam (5 subjects × 10 questions) or practice in a specific subject.  
-   - `testing.php`: Displays questions and captures user responses.  
-   - `checking.php`: Processes scores; redirects to the transcript or review pages depending on exam type.  
-   - `review.php`: Displays detailed exam results, including user answers, correct answers, and explanations.  
-   - `leaderboard.php`: Shows ranking among users.  
-   - `statistical_charts.php`: Graphically presents subject-wise statistics, such as highest error rates.
+## 資料與管理
 
----
+題庫管理位於 `/questions`，教師及管理者可管理八科的題幹、四個選項、正解、解析、難度與檢核狀態。內容更新建立新 ID 並停用原版本；停用不刪除原內容，保留既有檢討與進行中考卷的對應。僅修改檢核狀態時沿用 ID。統計欄位目前唯讀，尚未接上累計邏輯。
 
-## Backend Architecture
+正式及練習的交卷紀錄一律只記依序排列的題目 ID 與選項：
+```json
+{"version":2,"questions":[{"question_id":123,"selected_answer":"B"},{"question_id":456,"selected_answer":null}]}
+```
 
-1. **Server-side Logic**
-   - **PHP**: Handles user requests, executes application logic, and communicates with the database.  
-   - `utility_functions.php`: Contains reusable functions for database connection and page components, e.g.:
-     - `db_link()`: Establishes MySQL connection using `mysqli_connect()`.  
-     - `top_menu()`: Generates the top navigation menu, displaying different options based on user role.
+完整題目僅在準備及進行測驗時暫存；交卷後移除暫存內容。檢討依 ID 讀取保留的題目版本，歷史成績依難度權重即時計算。資料結構集中於 `database/schema.sql`，啟動只建立缺少的資料表；帳號、題目與紀錄不會重設。
 
-2. **Database Management**
-   - **MySQL** via **phpMyAdmin**. Key tables include:
-     - **Users**: ID, account, password, name, role, registration date, last login, previous test records.  
-     - **Question Banks**: Separate tables for each subject (Information Literacy & Ethics, Internet Fundamentals, Network Security, Office, Computer Fundamentals) with fields: question ID, content, options A–D, correct answer, explanation, total attempts, correct answers.
+## 開發
 
-3. **Functional Modules**
-   - **User Management (`member_management/`)**:  
-     - `list.php`: Displays user info; allows role changes.  
-     - `setting.php`: Processes role updates and deletions.  
-   - **Question Bank Management (`question_management/`)**:  
-     - `setting.php`: Handles addition, modification, and deletion of questions.  
-     - `show.php`: Displays question statistics (total questions, max question number, missing questions), allows editing or deletion.  
-   - **Modal Components (`modal/`)**: Handles login, logout, registration, password changes, and avatar updates.
+```sh
+npm install
+npm run check
+npm test
+npm start
+```
 
----
+測試使用獨立臨時資料庫並於結束時清除，不修改網站帳號與歷史。AI 生成測試以替身驗證流程，不消耗實際生成額度。正式測驗使用的 Codex CLI 設定見 [本機設定](LOCAL_SETUP.md)，資料表與題庫代碼見 [資料庫說明](database/README.md)。
 
-## Web Server
-
-The system is hosted on **Apache HTTP Server** to serve web content and manage requests.
-
+管理者的「統計數據」提供近 7／30 天及全部期間的正式應試人數、交卷次數、合格率、中位數、趨勢與分數分布，並列出八科題庫狀況及需留意題目。此頁僅讀取既有資料；題目次數是累計值，不隨期間篩選。練習交卷次數及 AI 生成成功率尚無完整歷史，暫不統計。

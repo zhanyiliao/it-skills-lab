@@ -1,0 +1,16 @@
+<%
+const axes=performance.map((bank,index)=>({bank,angle:(-90+index*360/performance.length)*Math.PI/180,label:[bank.name.slice(0,4),bank.name.slice(4)]}));
+const point=(scale,angle)=>(220+125*scale*Math.cos(angle)).toFixed(2)+','+(190+125*scale*Math.sin(angle)).toFixed(2);
+%>
+<section class="surface-card bank-performance" data-formal-radar aria-labelledby="bank-radar-title"><div class="section-heading"><div><p class="eyebrow">YOUR STRENGTHS, AT A GLANCE</p><h2 id="bank-radar-title"><%= performance.length===8 ? '八科能力雷達' : '各科作答表現' %></h2></div><span class="badge">本次正式測驗</span></div>
+<div class="bank-performance-grid">
+<% if(axes.length>=3) { %>
+<figure class="bank-radar-figure"><svg class="bank-radar" viewBox="0 0 440 370" role="img" aria-labelledby="bank-radar-svg-title bank-radar-description"><title id="bank-radar-svg-title">各題庫答對率雷達圖</title><desc id="bank-radar-description"><%= performance.map(b=>b.name+'：'+b.rate+'%，答對 '+b.correct+'／'+b.total+' 題').join('；') %>。外圈代表答對率 100%。</desc>
+<% for(const level of [20,40,60,80,100]) { %><polygon class="radar-grid" points="<%= axes.map(axis=>point(level/100,axis.angle)).join(' ') %>"/><text class="radar-scale" x="228" y="<%= 190-125*level/100-3 %>"><%= level %>%</text><% } %>
+<% for(const axis of axes) { const x=220+170*Math.cos(axis.angle),y=190+170*Math.sin(axis.angle); %><line class="radar-axis" x1="220" y1="190" x2="<%= 220+125*Math.cos(axis.angle) %>" y2="<%= 190+125*Math.sin(axis.angle) %>"/><text class="radar-label" text-anchor="middle" x="<%= x %>" y="<%= y %>"><tspan><%= axis.label[0] %></tspan><% if(axis.label[1]) { %><tspan x="<%= x %>" dy="17"><%= axis.label[1] %></tspan><% } %></text><% } %>
+<polygon class="radar-result" points="<%= axes.map(axis=>point(axis.bank.rate/100,axis.angle)).join(' ') %>"/>
+<% for(const axis of axes) { %><circle class="radar-point" cx="<%= 220+125*axis.bank.rate/100*Math.cos(axis.angle) %>" cy="<%= 190+125*axis.bank.rate/100*Math.sin(axis.angle) %>" r="4"><title><%= axis.bank.name %>：<%= axis.bank.rate %>%（<%= axis.bank.correct %>／<%= axis.bank.total %> 題）</title></circle><% } %></svg><figcaption>越靠近外圈，代表該科答對率越高。</figcaption></figure>
+<% } %>
+<div class="bank-performance-details"><p class="bank-performance-intro">看看各科表現，找出下一次練習的方向。</p><ul class="bank-performance-list">
+<% for(const bank of performance) { %><li><div class="bank-performance-row"><div><h3><%= bank.name %></h3><p>答對 <%= bank.correct %>／<%= bank.total %> 題</p></div><strong><%= bank.rate %>%</strong></div><div class="bank-rate-track" aria-hidden="true"><span style="width:<%= bank.rate %>%"></span></div></li><% } %>
+</ul><p class="field-help">依這份考卷的題目與答案計算，未作答也計入總題數。</p></div></div></section>

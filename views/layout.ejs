@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="<%= csrf %>"><meta name="theme-color" content="#ffffff">
+<title><%= title %> | IT Skills Lab</title>
+<link rel="icon" href="/images/logo.ico?v=<%= assetVersion %>" sizes="16x16 32x32 48x48 64x64 128x128 256x256">
+<link rel="icon" type="image/svg+xml" href="/images/favicon.svg?v=<%= assetVersion %>">
+<link rel="stylesheet" href="/css/site.css?v=<%= assetVersion %>">
+<script src="/js/interface.js?v=<%= assetVersion %>" defer></script>
+</head>
+<% const focused = path === '/exams/current'; %>
+<body id="page-top" class="site-shell <%= focused ? 'page-focus' : path === '/' ? 'page-home' : 'page-standard' %>">
+<a class="skip-link" href="#main-content">跳至主要內容</a>
+<header class="site-header"><div class="site-header-inner">
+<a class="site-brand" href="/" aria-label="IT Skills Lab 首頁"><img src="/images/logo.svg?v=<%= assetVersion %>" width="36" height="36" alt=""><span>IT Skills Lab<small>資訊能力練習室</small></span></a>
+<% if(focused) { %>
+<span class="focus-label"><%- icon('book') %> 專心作答</span><a class="focus-navigation-link" href="#exam-navigation">查看作答進度 <%- icon('grid') %></a>
+<% } else { %>
+<nav class="site-navigation" aria-label="主要導覽"><%- include('partials/navigation',{navigationMode:'primary'}) %></nav>
+<div class="site-actions">
+<% if(hasRole(user,1)) { %><details class="site-dropdown management-menu"><summary>管理工具 <span aria-hidden="true">⌄</span></summary><nav class="site-dropdown-panel" aria-label="管理工具"><%- include('partials/navigation',{navigationMode:'management'}) %></nav></details><% } %>
+<% if(user) { %>
+<details class="site-dropdown account-menu"><summary aria-label="帳號選單"><img class="avatar" src="<%= avatar(user) %>" alt=""><span class="account-name"><%= user.username %></span><span aria-hidden="true">⌄</span></summary><nav class="site-dropdown-panel" aria-label="帳號操作"><p class="dropdown-identity"><strong><%= user.username %></strong><span><%= roleName(user) %></span></p><a class="nav-link" href="/account/<%= user.identity %>"><%- icon('user') %><span>個人主頁</span></a><a class="nav-link" href="/results/latest"><%- icon('document') %><span>成績與檢討</span></a><a class="nav-link" href="/settings/profile"><%- icon('settings') %><span>帳號設定</span></a><a class="nav-link" href="/logout"><%- icon('logout') %><span>登出</span></a></nav></details>
+<% } else { %><a class="site-login" href="/login">登入</a><a class="button button-small site-register" href="/register">建立帳號</a><% } %>
+<details class="site-dropdown mobile-site-menu"><summary aria-label="開啟導覽選單"><%- icon('menu') %></summary><nav class="site-dropdown-panel" aria-label="行動版導覽"><%- include('partials/navigation',{navigationMode:'mobile'}) %><% if(!user) { %><a class="nav-link" href="/register"><%- icon('user') %><span>建立帳號</span></a><% } %></nav></details>
+</div><% } %>
+</div></header>
+<div class="app-workspace">
+<main id="main-content" class="app-main">
+<% if(path !== '/' && !focused) { %><div class="page-heading"><div><p class="eyebrow"><%= eyebrow %></p><h1><%= title %></h1><% if(description) { %><p class="page-description"><%= description %></p><% } %></div></div><% } %>
+<% if(status) { %><div class="notice" role="status"><%- icon('check') %><span><%= status %></span></div><% } %>
+<%- body %>
+</main>
+<footer class="app-footer"><p><strong>IT Skills Lab</strong><span>讓每一次練習，都有收穫。</span></p><div><a href="/about">關於測驗</a><span>© <%= new Date().getFullYear() %> IT Skills Lab</span></div></footer>
+<div id="page-bottom" aria-hidden="true"></div></div>
+<% if(pager && pager.last > 1) { %><nav class="page-jump-controls" aria-label="頁面快速跳轉"><a href="#page-top"><span aria-hidden="true">↑</span>回到頂端</a><a href="#page-bottom"><span aria-hidden="true">↓</span>前往底部</a></nav><% } %>
+<% if(focused) { %><script src="/js/exam.js?v=<%= assetVersion %>" defer></script><% } %>
+<% if(path === '/') { %><script src="/js/daily-question.js?v=<%= assetVersion %>" defer></script><% } %>
+<% if(path === '/exams') { %><script src="/js/practice.js?v=<%= assetVersion %>" defer></script><script src="/js/ai-questions.js?v=<%= assetVersion %>" defer></script><% } %>
+<% if(path === '/settings/profile') { %><script src="/js/avatar-cropper.js?v=<%= assetVersion %>" defer></script><% } %>
+</body></html>

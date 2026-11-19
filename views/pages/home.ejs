@@ -1,0 +1,9 @@
+<header class="learning-intro"><div><p class="eyebrow">YOUR DAILY PRACTICE</p><h1>從今天這一題開始<span>。</span></h1><p>先練一題，再決定今天想挑戰多少。</p></div><span class="learning-edition"><span></span>資訊能力練習室</span></header>
+<div class="learning-workbench"><%- include('../partials/daily-question') %>
+<aside class="learning-next" aria-labelledby="learning-next-title">
+<div class="practice-entry"><span class="entry-index">NEXT / 下一步</span><div class="entry-target" aria-hidden="true"><span></span></div><h2 id="learning-next-title">準備好，<br>再多練一點。</h2><p>選擇想加強的領域，從題庫中抽題開始練習。</p><a class="button" href="/exams">開始測驗 <%- icon('arrow') %></a><dl class="practice-formats"><div><dt>主題練習</dt><dd>10 / 25 / 50 題</dd></div><div><dt>八個領域</dt><dd>混選題庫 · 交卷後檢討</dd></div></dl></div>
+<% if(user) { %><a class="learning-review-link" href="/results/latest"><span><strong>回顧上一次的表現</strong><small>查看成績與考後檢討</small></span><%- icon('arrow') %></a><% } else { %><p class="learning-account-note">登入後可開始 AI 練習，交卷後查看答案與解析。</p><% } %>
+</aside></div>
+<section class="topic-directory" aria-labelledby="topic-directory-title"><div class="topic-directory-heading"><h2 id="topic-directory-title">練習涵蓋的八個主題</h2><a class="text-link" href="/about">了解測驗 <%- icon('arrow') %></a></div><div class="topic-directory-list">
+<% aiBanks.forEach((bank,index)=> { %><div class="topic-directory-item"><span><%= String(index+1).padStart(2,'0') %></span><h3><%= bank.name %></h3><p><%= bank.description %></p></div><% }); %>
+</div></section>

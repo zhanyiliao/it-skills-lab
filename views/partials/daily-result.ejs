@@ -1,0 +1,3 @@
+<div class="daily-result <%= dailyResult.correct ? 'daily-result-correct' : 'daily-result-wrong' %>" role="status"><span class="icon-tile <%= dailyResult.correct ? 'mint' : 'danger' %>"><%- icon(dailyResult.correct ? 'check' : 'book') %></span><div><h3><%= dailyResult.correct ? '答對了，繼續保持！' : '這次沒答對，一起看看正確答案。' %></h3><p>你的答案：<%= dailyResult.choice %>　<span data-daily-correct-answer>正確答案：<%= dailyResult.answer %></span></p></div></div>
+
+<% if(dailyResult.explanation) { %><section class="ai-review-explanation" data-daily-explanation><h3>解析</h3><p class="preserve-whitespace"><%= dailyResult.explanation %></p></section><% } %>

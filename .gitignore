@@ -1,0 +1,6 @@
+.local-runtime/
+/node_modules/
+/.env
+npm-debug.log*
+/coverage/
+/public/images/question/snapshots/

@@ -1,0 +1,7 @@
+<div class="auth-grid"><aside class="auth-aside"><p class="eyebrow">START SMALL. KEEP GOING.</p><h2>從今天開始，<br>為自己累積實力。</h2><p>自由選擇題庫、練習與複習，<br>讓準備檢定成為一件有方向的事。</p><%- illustration %></aside>
+<section class="auth-form"><h2>開始你的學習旅程</h2><p>完成以下資料，即可建立學生帳號。</p>
+<form action="/register" method="POST"><input type="hidden" name="_token" value="<%= csrf %>">
+<label for="username">帳號</label><input id="username" name="username" minlength="6" maxlength="30" pattern="[a-zA-Z][a-zA-Z0-9_]{5,29}" autocomplete="username" required><small>6–30 個英數字或底線，以英文字母開頭。</small>
+<label for="password">密碼</label><input type="password" id="password" name="password" minlength="8" maxlength="72" autocomplete="new-password" required><small>8–72 個英數字或半形符號。</small>
+<label for="password_confirmation">確認密碼</label><input type="password" id="password_confirmation" name="password_confirmation" autocomplete="new-password" required>
+<button type="submit">建立學生帳號 <%- icon('arrow') %></button></form><p class="auth-switch">已經有帳號？ <a href="/login">登入繼續學習</a></p></section></div>

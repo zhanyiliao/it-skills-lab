@@ -1,0 +1,27 @@
+<article class="about-overview" aria-label="關於 IT Skills Lab">
+<p class="about-intro">IT Skills Lab 是一間資訊能力練習室，讓你透過實際情境理解觀念、練習判斷，依自己的步調累積從原理到應用的能力。</p>
+
+<section aria-labelledby="about-topics">
+<h2 id="about-topics">找到想加強的領域</h2>
+<p>目前涵蓋<%= aiBanks.map(bank => bank.name).join('、') %>八個主題。你可以專注一科，也可以混合選題，練習不同領域之間的連結。</p>
+</section>
+
+<section aria-labelledby="about-practice">
+<h2 id="about-practice">選擇題數，開始練習</h2>
+<p>登入後選擇題庫與 <%= aiAmounts.join('／') %> 題，從已通過檢核的題庫中抽選單選題。難度分為 1～9 星，以 4 星為中心；每個所選題庫都會出題。</p>
+<p>考卷準備完成後才開始計時。重新整理會保留原卷與答案；離開作答頁面則會自動交卷，未作答的題目計為答錯。</p>
+</section>
+
+<section aria-labelledby="about-formal">
+<h2 id="about-formal">用正式測驗留下成績</h2>
+<p>正式測驗涵蓋八科共 50 題，各科先分配題數，再以整數分配六成題庫題與四成 AI 新題，合計 30＋20 題。新題會避開已抽出題目的細節考點，並經獨立內容檢查，準備完成後才開始計時。</p>
+<p>依各題星等加權計分，滿分 100.00 分，60.00 分以上且於 90 分鐘內完成為合格；正式成績會列入個人紀錄、最高成績與排行榜，交卷後可回看完整考卷與解析。重新整理保留原卷與答案，離開作答頁面會自動交卷。</p>
+</section>
+
+<section aria-labelledby="about-review">
+<h2 id="about-review">從檢討中理解原因</h2>
+<p>作答時不顯示難度，交卷後才呈現正解、解析與星等。練習結果保留一小時，可從「成績與檢討」回到檢討，不列入正式成績與排行榜。遇到有疑問的內容，也建議搭配可靠來源查證，練習說明自己的判斷。</p>
+</section>
+
+<a class="button" href="/exams">開始練習 <%- icon('arrow') %></a>
+</article>

@@ -1,0 +1,6 @@
+<% const rating=Number(question.floating_difficulty.toFixed(2)); %>
+<div class="difficulty-rating" role="img" aria-label="題目難度 <%= rating.toFixed(2) %>，滿分 10 星">
+<span class="difficulty-rating-label" aria-hidden="true">難度</span>
+<span class="difficulty-rating-detail" aria-hidden="true"><span class="difficulty-stars"><% for(let index=0;index<10;index++){ %><span class="difficulty-star" style="--star-fill:<%= Math.max(0,Math.min(100,(rating-index)*100)).toFixed(2) %>%"></span><% } %></span>
+<strong class="difficulty-rating-number"><%= rating.toFixed(2) %><small>／10</small></strong></span>
+</div>

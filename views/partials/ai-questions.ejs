@@ -1,0 +1,29 @@
+<section class="mode-card ai-mode-card" data-practice-settings>
+<div class="mode-card-heading"><span class="icon-tile mint"><%- icon('book') %></span><h2>練習測驗</h2><p>選擇想練習的領域，從已通過檢核的題庫中抽題。</p></div>
+<div class="mode-card-body">
+<form action="/exams/practice/start" method="POST" data-practice-start data-confirm-exam-end="<%= hasActiveExam ? '新考卷準備完成後，尚未完成的考卷會先交卷，未答題算錯。確定要開始練習測驗嗎？' : '' %>">
+<input type="hidden" name="_token" value="<%= csrf %>">
+<fieldset data-ai-settings class="ai-exam-settings">
+<legend>練習測驗設定</legend>
+<div><h3>今天想練幾題？</h3><div class="segmented-choices"><% for(const amount of aiAmounts) { %><label class="segmented-choice"><input type="radio" name="amount" value="<%= amount %>" <%= amount===10 ? 'checked' : '' %>><%= amount %> 題</label><% } %></div><p class="form-note">題目以中等難度為主，作答時不顯示難度，交卷後可查看。考卷準備完成後才開始作答計時。</p></div>
+<div>
+<div class="ai-bank-toolbar"><h3 id="ai-bank-title">選擇題庫</h3><div class="ai-selection-actions">
+<button type="button" data-ai-bank-selection="all" aria-controls="ai-bank-grid" hidden>全部選取</button>
+<button type="button" data-ai-bank-selection="none" aria-controls="ai-bank-grid" hidden>全部取消選取</button>
+</div></div>
+<div class="ai-bank-grid" id="ai-bank-grid" role="group" aria-labelledby="ai-bank-title">
+<% for(const bank of aiBanks) { %><label class="ai-bank-choice">
+<input type="checkbox" name="banks[]" value="<%= bank.id %>" checked aria-describedby="ai-bank-help-<%= bank.id %>">
+<span class="ai-bank-name"><%= bank.name %></span>
+<span class="ai-bank-help" id="ai-bank-help-<%= bank.id %>" role="tooltip"><%= bank.description %></span>
+</label><% } %>
+</div>
+<p class="form-note">可混選八個題庫；至少 10 題，所選題庫都會出題，題數相差最多一題。</p>
+</div>
+</fieldset>
+<button type="submit" class="button" data-ai-button>開始練習測驗 <%- icon('arrow') %></button>
+<p class="form-note">沿用練習測驗機制，不計入正式成績；交卷後可在 1 小時內查看答案與解析，也可從「成績與檢討」回到檢討。</p>
+</form>
+<p data-ai-status role="status" aria-live="polite"></p>
+<p data-ai-error role="alert" hidden></p>
+</div></section>

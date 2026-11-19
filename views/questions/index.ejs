@@ -1,0 +1,16 @@
+<div class="actions"><% for(const item of aiBanks){ %><a href="/questions?bank=<%= item.code %>"><%= item.name %></a><% } %></div>
+<h2><%= bank.name %></h2>
+<p>內容修改會建立新的題目 ID，並停用原版本；停用的題目仍供既有紀錄檢討。統計數字僅供查看。</p>
+<div class="metric-grid"><% for(const [key,label] of [['total','總題數'],...Object.entries(statuses)]){ %><div class="metric-card"><span><%= label %></span><strong><%= summary[key] %><small>題</small></strong></div><% } %></div>
+<div class="actions"><% for(const [value,label] of [['all','全部'],...Object.entries(statuses)]){ %><a href="/questions?bank=<%= bankId %>&status=<%= value %>" <%- status===value?'aria-current="page"':'' %>><%= label %></a><% } %></div>
+<details class="panel"><summary>新增題目</summary><form action="/questions" method="POST"><input type="hidden" name="_token" value="<%= csrf %>"><%- include('fields',{question:null}) %><button class="button" type="submit">新增</button></form></details>
+<%- include('../partials/pagination',{top:true}) %>
+<% for(const item of items){ %><article class="question-block" id="question-<%= item.id %>"><h3>題目 ID：<%= item.id %> · <%= item.difficulty %> 星 · <%= statuses[item.review_status] %></h3>
+<div class="question-content" style="white-space:pre-wrap"><%= item.question %></div>
+<% for(const option of options){ %><div class="answer-option <%= item.answer===option?'correct-answer':'' %>" style="white-space:pre-wrap">（<%= option %>）<%= item[option] %></div><% } %>
+<p style="white-space:pre-wrap">解析：<%= item.explanation %></p><p>總出現次數：<%= item.appearance_count %>　答對次數：<%= item.correct_count %>　未作答次數：<%= item.unanswered_count %></p>
+<details class="panel"><summary>編輯題目</summary><form action="/questions/<%= item.id %>" method="POST"><input type="hidden" name="_token" value="<%= csrf %>"><input type="hidden" name="_method" value="PUT"><%- include('fields',{question:item}) %><button class="button" type="submit">儲存</button></form></details>
+<% if(item.review_status!=='rejected'){ %><details class="panel"><summary>停用題目</summary><p>停用後不再抽選此題，既有檢討仍保留。</p><form action="/questions/<%= item.id %>" method="POST"><input type="hidden" name="_token" value="<%= csrf %>"><input type="hidden" name="_method" value="DELETE"><button class="button" type="submit">確認停用</button></form></details><% } %>
+</article><% } %>
+<% if(!items.length){ %><p>目前沒有符合條件的題目。</p><% } %>
+<%- include('../partials/pagination',{top:false}) %>

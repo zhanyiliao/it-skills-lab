@@ -1,0 +1,25 @@
+<div class="columns"><section class="panel"><h2>修改密碼</h2><form action="/settings/password" method="POST"><input type="hidden" name="_token" value="<%= csrf %>">
+<label for="current_password">原密碼</label><input id="current_password" type="password" name="current_password" autocomplete="current-password" required>
+<label for="password">新密碼</label><input id="password" type="password" name="password" minlength="8" maxlength="72" autocomplete="new-password" required>
+<label for="password_confirmation">確認新密碼</label><input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" required><button type="submit" class="btn_s blue">更新密碼</button></form></section>
+<section class="panel avatar-settings"><h2>修改頭像</h2>
+<img src="<%= avatar(user) %>" class="rounded avatar-current" width="96" height="96" alt="目前頭像">
+<form action="/settings/avatar" method="POST" enctype="multipart/form-data" data-avatar-form>
+<input type="hidden" name="_token" value="<%= csrf %>">
+<input type="hidden" name="crop_x" disabled><input type="hidden" name="crop_y" disabled><input type="hidden" name="crop_size" disabled>
+<label for="photo">選擇圖片</label><input id="photo" type="file" name="photo" accept="image/png,image/jpeg,image/webp" aria-describedby="avatar-file-help" required>
+<p class="field-help" id="avatar-file-help">PNG、JPEG 或 WebP，最大 4 MB，寬高各不超過 4096 像素。</p>
+<div data-avatar-editor class="avatar-cropper" hidden>
+<div class="avatar-crop-layout"><div class="avatar-crop-main">
+<div class="avatar-crop-stage"><canvas data-avatar-canvas width="512" height="512" tabindex="0" aria-label="頭像裁切區，可拖曳圖片或使用方向鍵調整位置" aria-describedby="avatar-crop-help"></canvas><div class="avatar-crop-mask" aria-hidden="true"></div></div>
+<p class="field-help" id="avatar-crop-help">拖曳調整位置。外框是正方形裁切範圍，圓形內是頭像顯示區域；也可用方向鍵微調。</p>
+</div><div class="avatar-crop-preview"><span>頭像預覽</span><canvas data-avatar-preview width="256" height="256" role="img" aria-label="裁切後的圓形頭像預覽"></canvas></div></div>
+<label for="avatar-zoom" class="avatar-zoom-label">縮放圖片 <output for="avatar-zoom" data-avatar-zoom-value>100%</output></label>
+<input id="avatar-zoom" data-avatar-zoom type="range" min="1" max="4" step="0.01" value="1">
+<button type="button" class="button button-ghost" data-avatar-reset>重設位置與縮放</button>
+<p class="field-help">儲存為 256 × 256 的正方形圖片，網站會以圓形顯示。</p>
+</div>
+<p class="field-help avatar-crop-error" data-avatar-error role="alert" hidden></p>
+<noscript><p class="field-help">啟用 JavaScript 即可預覽與調整裁切；目前上傳會以圖片中央裁成正方形。</p></noscript>
+<button type="submit" class="btn_s green">儲存頭像</button>
+</form></section></div>

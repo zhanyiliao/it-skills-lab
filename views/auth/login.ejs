@@ -1,0 +1,8 @@
+<div class="auth-grid"><aside class="auth-aside"><p class="eyebrow">A LITTLE PRACTICE, A LITTLE PROGRESS.</p><h2>很高興，<br>又見到努力的你。</h2><p>每一次練習，都是為自己多準備一點。<br>今天也依自己的節奏前進吧。</p><%- illustration %></aside>
+<section class="auth-form"><h2>歡迎回來</h2><p>輸入帳號與密碼，開始今天的學習。</p>
+<form action="/login" method="POST"><input type="hidden" name="_token" value="<%= csrf %>">
+<label for="username">帳號</label><input id="username" name="username" maxlength="30" autocomplete="username" placeholder="請輸入你的帳號" required autofocus>
+<label for="password">密碼</label><input type="password" id="password" name="password" autocomplete="current-password" placeholder="請輸入密碼" required>
+<label class="check"><input type="checkbox" name="remember" value="1">保持登入狀態</label>
+<button type="submit">登入 <%- icon('arrow') %></button></form>
+<p class="auth-switch">還沒有帳號？ <a href="/register">建立你的學習帳號</a></p></section></div>

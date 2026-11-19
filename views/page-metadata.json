@@ -1,0 +1,57 @@
+{
+  "/register": {
+    "eyebrow": "YOUR NEXT CHAPTER STARTS HERE",
+    "description": "建立帳號，開始你的資訊能力練習旅程。"
+  },
+  "/results/latest": {
+    "eyebrow": "EVERY EFFORT COUNTS",
+    "description": "集中查看練習檢討與正式測驗紀錄，找到下一步可以加強的方向。"
+  },
+  "/logout": {
+    "eyebrow": "SEE YOU NEXT TIME"
+  },
+  "/questions": {
+    "eyebrow": "KEEP THE LEARNING GROWING",
+    "description": "管理八個題庫的題目、難度、解析與檢核狀態。",
+    "title": "題庫管理"
+  },
+  "/exams": {
+    "eyebrow": "A LITTLE PRACTICE, EVERY DAY",
+    "description": "選擇想練習的題庫與題數，從已通過檢核的題庫中開始練習。"
+  },
+  "/leaderboard": {
+    "eyebrow": "A LITTLE HEALTHY COMPETITION",
+    "description": "看見大家的學習成果，為下一次練習找到前進的動力。"
+  },
+  "/settings/profile": {
+    "eyebrow": "MAKE YOURSELF AT HOME",
+    "description": "管理登入密碼與個人頭像，打造屬於自己的學習空間。"
+  },
+  "/login": {
+    "eyebrow": "WELCOME BACK",
+    "description": "登入你的學習空間，繼續累積每一次進步。"
+  },
+  "/statistics": {
+    "eyebrow": "A CLEARER VIEW OF LEARNING",
+    "description": "查看使用趨勢、正式測驗表現與題庫狀況，找出需要留意的題目。"
+  },
+  "/members": {
+    "eyebrow": "PEOPLE & PERMISSIONS",
+    "description": "查看會員資料與角色設定，讓每個人都能進入適合自己的學習空間。"
+  },
+  "profile": {
+    "eyebrow": "YOUR PERSONAL LEARNING SPACE",
+    "description": "每一份成績背後，都有一點一滴累積的努力。"
+  },
+  "/exams/current": {
+    "eyebrow": "TAKE YOUR TIME. DO YOUR BEST.",
+    "description": "仔細閱讀每一道題目，依自己的判斷選擇最合適的答案。"
+  },
+  "/results/review": {
+    "eyebrow": "LEARN FROM EVERY ANSWER",
+    "description": "看懂錯題的原因，讓下一次的自己更有把握。"
+  },
+  "/about": {
+    "eyebrow": "ABOUT IT SKILLS LAB"
+  }
+}

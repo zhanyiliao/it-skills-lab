@@ -1,0 +1,10 @@
+<% if(typeof practiceReview !== 'undefined' && practiceReview) { %>
+<section class="learning-note practice-review-entry" aria-labelledby="practice-review-title">
+<span class="icon-tile mint"><%- icon('clock') %></span>
+<div><h2 id="practice-review-title"><%= practiceReview.title %></h2>
+<p><%= practiceReview.amount %> 題 · <%= formatScore(practiceReview.score) %> 分</p>
+<p>可檢討至 <time datetime="<%= new Date(practiceReview.expires_at*1000).toISOString() %>"><%= formatDate(practiceReview.expires_at) %></time>（台北時間）</p>
+<p class="practice-review-note">開始另一份考卷或登出後，這份暫存檢討會清除。</p></div>
+<a class="button button-small" href="/results/review?mode=practice">回到檢討 <%- icon('arrow') %></a>
+</section>
+<% } %>

@@ -1,0 +1,17 @@
+<section id="daily-question" class="daily-question-section" aria-labelledby="daily-question-title">
+<div class="section-heading"><div><p class="eyebrow">ONE QUESTION, ONE SMALL STEP</p><h2 id="daily-question-title">每日一題</h2></div><% if(dailyQuestion) { %><span class="daily-date"><%- icon('clock') %> <%= dailyQuestion.date %> · 台北時間</span><% } %></div>
+<% if(dailyQuestion) { %><div class="daily-question-card">
+<form action="/daily-question/answer" method="POST" data-daily-question-form data-requires-login="<%= user ? 'false' : 'true' %>">
+<input type="hidden" name="_token" value="<%= csrf %>">
+<% for(const key of ['date','question_id','signature']) { %><input type="hidden" name="<%= key %>" value="<%= key==='question_id' ? dailyQuestion.id : dailyQuestion[key] %>"><% } %>
+<div class="daily-question-body"><div class="daily-prompt"><div class="daily-question-meta"><span class="badge">今日主題 · <%= dailyQuestion.bank_name %></span><%- include('difficulty-rating',{question:dailyQuestion}) %></div><div id="daily-question-stem" class="question-content preserve-whitespace"><%- dailyQuestion.question %></div><p class="field-help">每天花一點時間，讓資訊能力再進步一點。</p></div>
+<fieldset class="daily-options" aria-describedby="daily-question-stem"><legend>選擇你的答案</legend>
+<% for(const option of options) { %><label data-daily-choice class="answer-option <%= dailyResult?.answer === option ? 'correct-answer' : '' %>" for="daily-answer-<%= option %>"><input id="daily-answer-<%= option %>" type="radio" name="choice" value="<%= option %>" <%= dailyResult?.choice === option ? 'checked' : '' %> required><span class="option-letter"><%= option %></span><span class="option-content preserve-whitespace"><%- dailyQuestion[option] %></span></label><% } %>
+</fieldset></div>
+<div data-daily-result aria-live="polite" aria-atomic="true"><% if(dailyResult) { %><%- include('daily-result') %><% } %></div>
+<p class="field-help" data-daily-error role="alert" hidden></p><a class="button button-ghost" data-daily-refresh href="/#daily-question" hidden>重新載入今天的題目</a>
+<div class="daily-question-footer"><p><%- icon('info') %> <%= user ? '每日一題不計入正式成績，可以放心練習。' : '登入後即可送出作答並查看答案。' %></p><button class="button" type="submit"><%= dailyResult ? '再次作答' : '送出作答，看答案' %> <%- icon('arrow') %></button></div>
+<noscript><% if(!user) { %><p class="field-help">請先<a href="/login?return=daily-question">登入</a>，才能提交作答並查看正解。</p><% } %></noscript>
+</form></div>
+<dialog id="daily-question-login-dialog" class="daily-login-dialog" aria-labelledby="daily-login-title" aria-describedby="daily-login-description"><span class="icon-tile mint"><%- icon('user') %></span><h2 id="daily-login-title">先登入，再挑戰今天這一題。</h2><p id="daily-login-description">請先登入，才能提交每日一題並查看答案。登入後會帶你回到這裡。</p><div class="actions"><a class="button" href="/login?return=daily-question">前往登入 <%- icon('arrow') %></a><button type="button" class="button button-ghost" data-daily-dialog-close>稍後再說</button></div></dialog>
+<% } else { %><div class="daily-question-card daily-empty"><span class="icon-tile mint"><%- icon('book') %></span><div><h3>今天的題目準備中。</h3><p>目前尚無可用題目，等題庫準備好，再來挑戰每日一題。</p></div></div><% } %></section>
