@@ -7,8 +7,8 @@
   "properties": {
     "reviews": {
       "type": "array",
-      "minItems": 20,
-      "maxItems": 20,
+      "minItems": 5,
+      "maxItems": 5,
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -24,7 +24,7 @@
           "index": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 19
+            "maximum": 4
           },
           "quality_ok": {
             "type": "boolean"
@@ -43,7 +43,7 @@
             "items": {
               "type": "integer",
               "minimum": 0,
-              "maximum": 19
+              "maximum": 4
             }
           },
           "reason": {

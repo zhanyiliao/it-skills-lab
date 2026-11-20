@@ -9,7 +9,7 @@ import {setupDatabase} from '../src/setup.js';
 import {createApp} from '../src/app.js';
 import {createPool,one} from '../src/db.js';
 import {now} from '../src/support.js';
-import {aiBanks} from '../src/services/ai-banks.js';
+import {questionBanks} from '../src/services/question-banks.js';
 import {CodexQuestionGenerator} from '../src/services/ai-questions.js';
 import {QuestionRepository} from '../src/services/questions.js';
 import {RecordRepository} from '../src/services/records.js';
@@ -46,7 +46,7 @@ function fields(html,sequence=1,extra={}){
  return {_token:csrf(html),_exam:html.match(/name="_exam" value="([^"]+)"/)[1],_page:html.match(/name="_page" value="([^"]+)"/)[1],
   _sequence:sequence,visibility:'visible',...extra};
 }
-async function startPractice(amount=10,banks=aiBanks.map(b=>b.id)){
+async function startPractice(amount=10,banks=questionBanks.map(b=>b.id)){
  await student.post('/exams/practice/start').type('form').send({_token:await token(student),amount,'banks[]':banks}).expect(302);
  return paper();
 }
@@ -142,7 +142,7 @@ describe('current website and reference-history workflows',()=>{
  it('question management requires teacher role and validates CSRF and all eight banks',async()=>{
   await student.get('/questions').expect(403);
   await teacher.post('/questions').type('form').send({}).expect(419);
-  for(const bank of aiBanks){
+  for(const bank of questionBanks){
    const page=await teacher.get('/questions?bank='+bank.code).expect(200);
    assert.match(page.text,new RegExp(bank.name));assert.match(page.text,/name="difficulty"/);
    assert.match(page.text,/name="explanation"/);
@@ -155,7 +155,7 @@ describe('current website and reference-history workflows',()=>{
   const statsBefore=await questionStats();
   const before=await count('exam_records'),page=await startPractice(),row=await activeRow(),exam=decode(row.exam);
   assert.equal(exam.source,'bank');assert.equal(exam.snapshot.questions.length,10);
-  for(const bank of aiBanks)assert.ok(exam.snapshot.questions.some(q=>q.bank_name===bank.name));
+  for(const bank of questionBanks)assert.ok(exam.snapshot.questions.some(q=>q.bank_name===bank.name));
   assert.doesNotMatch(page.text,/★|☆|difficulty-rating|correct_answer|selected_answer/);
   const answer=exam.snapshot.questions[0].correct_answer;
   await student.post('/exams/save').type('form').send(fields(page.text,1,{Q1:answer})).expect(200);
@@ -199,9 +199,9 @@ describe('current website and reference-history workflows',()=>{
   try{await assert.rejects(repository.start(50,['ai-applications']),e=>e.status===422);}
   finally{await pool.query("UPDATE questions SET review_status='approved' WHERE bank_code=7");}
  });
- it('hybrid formal submission admits twenty questions atomically and stores fifty valid references',async()=>{
+ it('hybrid formal submission admits five questions atomically and stores fifty valid references',async()=>{
   const page=await startFormal(),exam=decode((await activeRow()).exam);
-  assert.equal(exam.mode,'formal');assert.equal(exam.origins.filter(q=>q.kind==='bank').length,30);
+  assert.equal(exam.mode,'formal');assert.equal(exam.origins.filter(q=>q.kind==='bank').length,45);
   const input=fields(page.text,1,Object.fromEntries(exam.snapshot.questions.map((q,i)=>['Q'+(i+1),q.correct_answer])));
   const before=await count('questions'),beforeRecords=await count('exam_records');
   await pool.query("CREATE TRIGGER reference_rollback BEFORE INSERT ON exam_records FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='forced rollback'");
@@ -214,10 +214,10 @@ describe('current website and reference-history workflows',()=>{
   const submitted=await student.post('/exams/submit').type('form').send(input).expect(302);
   recordId=Number(submitted.headers.location.split('=')[1]);
   const record=await one(pool,'SELECT * FROM exam_records WHERE id=?',[recordId]),details=assertReferences(record.details,50);
-  assert.equal(Number(record.score),100);assert.equal(await count('questions'),before+20);
+  assert.equal(Number(record.score),100);assert.equal(await count('questions'),before+5);
   const ids=details.questions.map(q=>q.question_id);
   const rows=(await pool.query('SELECT * FROM questions WHERE id IN (?)',[ids]))[0];assert.equal(rows.length,50);
-  assert.equal(rows.filter(q=>q.generation_batch==='formal-'+exam.nonce).length,20);
+  assert.equal(rows.filter(q=>q.generation_batch==='formal-'+exam.nonce).length,5);
   for(const [index,ref]of details.questions.entries()){
    const q=rows.find(q=>q.id===ref.question_id);assert.equal(ref.selected_answer,q.answer);
    assert.equal(questionTextHtml(q.question),exam.snapshot.questions[index].question);
@@ -238,7 +238,7 @@ describe('current website and reference-history workflows',()=>{
   const fresh=rows.filter(q=>q.generation_batch==='formal-'+exam.nonce);
   assert.ok(fresh.every(q=>!todayIds.has(q.id)&&tomorrowIds.has(q.id)));
   await student.post('/exams/submit').type('form').send(input).expect(409);
-  assert.equal(await count('exam_records'),beforeRecords+1);assert.equal(await count('questions'),before+20);
+  assert.equal(await count('exam_records'),beforeRecords+1);assert.equal(await count('questions'),before+5);
   assert.equal(Number((await one(pool,'SELECT SUM(appearance_count) AS total FROM questions')).total),0);
  });
  it('formal reference reviews remain stable after source questions are revised or disabled',async()=>{

@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { drawDifficulty, sampleByDifficulty } from '../src/services/difficulty.js';
-import { aiBanks, bankForCode } from '../src/services/ai-banks.js';
+import { questionBanks, bankForCode } from '../src/services/question-banks.js';
 import { DailyQuestionService } from '../src/services/daily.js';
 
 test('bank codes are explicit zero through seven with stable names and no duplicate identifiers',()=>{
-  assert.deepEqual(aiBanks.map(bank=>bank.code),[0,1,2,3,4,5,6,7]);
-  assert.equal(new Set(aiBanks.map(bank=>bank.id)).size,8);
+  assert.deepEqual(questionBanks.map(bank=>bank.code),[0,1,2,3,4,5,6,7]);
+  assert.equal(new Set(questionBanks.map(bank=>bank.id)).size,8);
   assert.equal(bankForCode(0).name,'計算機系統');assert.equal(bankForCode(7).name,'人工智慧應用');
 });
 test('difficulty chooses only remaining levels and handles exhausted stocks without repeated IDs',()=>{

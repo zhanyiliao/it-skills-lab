@@ -1,4 +1,4 @@
-<div class="actions"><% for(const item of aiBanks){ %><a href="/questions?bank=<%= item.code %>"><%= item.name %></a><% } %></div>
+<div class="actions"><% for(const item of questionBanks){ %><a href="/questions?bank=<%= item.code %>"><%= item.name %></a><% } %></div>
 <h2><%= bank.name %></h2>
 <p>內容修改會建立新的題目 ID，並停用原版本；停用的題目仍供既有紀錄檢討。統計數字僅供查看。</p>
 <div class="metric-grid"><% for(const [key,label] of [['total','總題數'],...Object.entries(statuses)]){ %><div class="metric-card"><span><%= label %></span><strong><%= summary[key] %><small>題</small></strong></div><% } %></div>

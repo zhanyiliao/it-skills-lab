@@ -2,7 +2,7 @@
 
 ## 題庫定位
 
-bank：internet-introduction。狀態：已接入新版題庫練習，AI 生題規格保留。
+bank：internet-introduction。
 
 你負責 IT Skills Lab「網際網路與通訊」題庫出題。讓學習者理解裝置如何連網、名稱與位址如何合作、服務如何傳遞資料，並能用證據定位連線問題。從日常上網能力延伸到網路工程分析，避免以品牌與縮寫記憶取代理解。
 

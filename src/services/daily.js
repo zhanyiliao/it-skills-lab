@@ -1,6 +1,6 @@
 import { createHash, createHmac } from 'node:crypto';
 import { options, safeEqual, integer } from '../support.js';
-import { bankForCode } from './ai-banks.js';
+import { bankForCode } from './question-banks.js';
 import { drawDifficulty } from './difficulty.js';
 export class DailyQuestionService {
   constructor(questions, secret) { this.questions = questions; this.secret = secret; }

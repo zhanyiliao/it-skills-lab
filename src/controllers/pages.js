@@ -2,7 +2,7 @@ import {StatisticsService} from '../services/statistics.js';
 import {floatingDifficulty} from '../services/floating-difficulty.js';
 import { one } from '../db.js';
 import { questionTextHtml } from '../services/exam-paper.js';
-import { aiBanks } from '../services/ai-banks.js';
+import { questionBanks } from '../services/question-banks.js';
 import { wantsJson } from '../middleware.js';
 import { scoredUsersSql } from '../services/records.js';
 import { integer, fail, options, pager } from '../support.js';
@@ -20,7 +20,7 @@ export function pagesController(pool, daily, records) {
         delete dailyQuestion.explanation;
         for (const key of ['question', ...options]) dailyQuestion[key] = questionTextHtml(dailyQuestion[key]);
       }
-      return res.page('pages/home', { title: '資訊能力練習室', dailyQuestion, dailyResult: result, aiBanks });
+      return res.page('pages/home', { title: '資訊能力練習室', dailyQuestion, dailyResult: result, questionBanks });
     },
     dailyAnswer: async (req, res) => {
       const body = req.body;

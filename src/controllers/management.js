@@ -1,6 +1,6 @@
 import {transaction,one} from '../db.js';
 import {integer,fail,pager} from '../support.js';
-import {aiBanks} from '../services/ai-banks.js';
+import {questionBanks} from '../services/question-banks.js';
 import {validateQuestion} from '../middleware.js';
 export function managementController(pool,questions){
   const statuses={approved:'可出題',pending:'待檢核',rejected:'已停用'};
@@ -8,7 +8,7 @@ export function managementController(pool,questions){
   const destination=q=>'/questions?bank='+q.bank_code+'&status='+q.review_status;
   return {
     index:async(req,res)=>{
-      const bankId=integer(req.query.bank??0),bank=aiBanks.find(q=>q.code===bankId);
+      const bankId=integer(req.query.bank??0),bank=questionBanks.find(q=>q.code===bankId);
       if(!bank)fail(404,'題庫不存在。');
       const status=req.query.status??'approved';
       if(status!=='all'&&!Object.hasOwn(statuses,status))fail(422,'檢核狀態不正確。');
@@ -16,7 +16,7 @@ export function managementController(pool,questions){
       const pages=pager(Number(status==='all'?summary.total:summary[status]),10,req.query.page,'/questions',{bank:bankId,status});
       const [items]=await pool.query('SELECT * FROM questions WHERE bank_code=?'+(status==='all'?'':' AND review_status=?')+' ORDER BY id DESC LIMIT 10 OFFSET ?',
         status==='all'?[bankId,(pages.page-1)*10]:[bankId,status,(pages.page-1)*10]);
-      return res.page('questions/index',{title:'題庫管理',bankId,bank,aiBanks,status,statuses,summary,items,pager:pages});
+      return res.page('questions/index',{title:'題庫管理',bankId,bank,questionBanks,status,statuses,summary,items,pager:pages});
     },
     store:async(req,res)=>{
       const data=validateQuestion(req.body),id=await questions.create(data);

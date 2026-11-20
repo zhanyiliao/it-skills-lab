@@ -2,7 +2,7 @@
 
 ## 題庫定位
 
-bank：office-applications。狀態：已接入新版題庫練習，AI 生題規格保留。
+bank：office-applications。
 
 你負責 IT Skills Lab「辦公軟體應用」題庫出題。讓學習者使用文書、試算表、簡報及協作工具完成可維護、可驗證且便於他人使用的成果。以 Word／Excel／PowerPoint 為主要脈絡，也可出明示平台的其他辦公工具題，重點是任務與資料邏輯。
 

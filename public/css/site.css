@@ -2340,7 +2340,7 @@ body:has(.page-jump-controls) .app-main { padding-bottom:120px; }
 .ai-bank-help { position:absolute; z-index:5; bottom:calc(100% + 8px); left:0; width:max-content; max-width:min(260px,calc(100vw - 64px)); padding:9px 12px; border-radius:7px; background:var(--ink); color:#fff; box-shadow:0 4px 14px #17334524; font-size:12px; font-weight:400; line-height:1.6; opacity:0; visibility:hidden; pointer-events:none; }
 .ai-bank-choice:nth-child(4n) .ai-bank-help { left:auto; right:0; }
 .ai-bank-choice:is(:hover,:focus-within) .ai-bank-help { opacity:1; visibility:visible; }
-.ai-mode-card [data-ai-error] { color:var(--danger); }
+.practice-mode-card [data-practice-error] { color:var(--danger); }
 .preserve-whitespace { white-space:pre-wrap; overflow-wrap:anywhere; }
 .ai-review-explanation { margin-top:20px; padding:16px 18px; background:var(--brand-soft); border-radius:8px; }
 .ai-review-explanation h3 { font-size:14px; margin-bottom:8px; }

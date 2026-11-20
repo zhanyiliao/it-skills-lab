@@ -1,4 +1,4 @@
-import {aiBanks} from './ai-banks.js';
+import {questionBanks} from './question-banks.js';
 import {floatingDifficulty} from './floating-difficulty.js';
 import {recordScoreSql} from './scoring.js';
 import {now,fail,pager} from '../support.js';
@@ -50,7 +50,7 @@ function buildTrend(records,window){
 }
 function analyzeStatistics(records,questions,window,{dataset='all',attention='all',page=1}={}){
  const query={period:window.key,dataset,attention};
- const banks=aiBanks.map(bank=>({...bank,total:0,approved:0,pending:0,rejected:0,appearances:0,correct:0,unanswered:0,baseSum:0,floatingSum:0}));
+ const banks=questionBanks.map(bank=>({...bank,total:0,approved:0,pending:0,rejected:0,appearances:0,correct:0,unanswered:0,baseSum:0,floatingSum:0}));
  const attentionCounts=Object.fromEntries(Object.keys(attentionLabels).map(key=>[key,0]));
  const positions=new Map(),candidates=[];
  for(const q of [...questions].sort((a,b)=>Number(b.id)-Number(a.id))){

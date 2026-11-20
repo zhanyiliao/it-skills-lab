@@ -2,8 +2,8 @@ import {floatingDifficulty} from './floating-difficulty.js';
 import {weightedScore} from './scoring.js';
 import { readAnswerReferences } from './answer-records.js';
 import { randomInt } from 'node:crypto';
-import { aiBanks, aiSettings, aiDifficultyMax, bankForCode } from './ai-banks.js';
-import { sampleByDifficulty } from './difficulty.js';
+import { questionBanks, practiceSettings, bankForCode } from './question-banks.js';
+import { sampleByDifficulty, difficultyMax } from './difficulty.js';
 import {createPaper,questionTextHtml} from './exam-paper.js';
 import { options, fail } from '../support.js';
 
@@ -30,13 +30,13 @@ export class PracticeQuestionRepository {
     return rows;
   }
   async start(amount, selected) {
-    const settings=aiSettings(amount,selected), banks=settings.banks;
-    const codes=banks.map(id=>aiBanks.find(bank=>bank.id===id).code);
+    const settings=practiceSettings(amount,selected), banks=settings.banks;
+    const codes=banks.map(id=>questionBanks.find(bank=>bank.id===id).code);
     const rows=await this.approvedRows(codes);
     const minimum=Math.floor(settings.amount/banks.length), extra=settings.amount%banks.length;
-    const groups=new Map(banks.map(bank=>[bank,shuffled(rows.filter(q=>bankForCode(q.bank_code)?.id===bank))]));
+    const groups=new Map(banks.map(bank=>[bank,rows.filter(q=>bankForCode(q.bank_code)?.id===bank)]));
     for(const bank of banks)if(groups.get(bank).length<minimum)
-      fail(422,aiBanks.find(item=>item.id===bank).name+'的已通過題目不足，請減少題數或調整題庫。');
+      fail(422,questionBanks.find(item=>item.id===bank).name+'的已通過題目不足，請減少題數或調整題庫。');
     const eligible=shuffled(banks.filter(bank=>groups.get(bank).length>minimum));
     if(eligible.length<extra)fail(422,'所選題庫的已通過題目不足，無法平均分配，請調整題數或題庫。');
     const extras=new Set(eligible.slice(0,extra));
@@ -57,7 +57,7 @@ export class PracticeQuestionRepository {
       if(!q)return {position:index+1,question_id:reference.question_id,selection,bank_name:'無法讀取題目',missing:true,correct:false};
       return {position:index+1,question_id:reference.question_id,bank_name:bankForCode(q.bank_code)?.name??String(q.bank_code),
         question:questionTextHtml(q.question),...Object.fromEntries(options.map(option=>[option,questionTextHtml(q[option])])),
-        answer:q.answer,selection,correct:selection===q.answer,difficulty:q.difficulty,difficulty_scale:aiDifficultyMax,explanation:q.explanation,
+        answer:q.answer,selection,correct:selection===q.answer,difficulty:q.difficulty,difficulty_scale:difficultyMax,explanation:q.explanation,
         ...(includeFloatingDifficulty?{floating_difficulty:floatingDifficulty(q)}:{})};
     });
   }

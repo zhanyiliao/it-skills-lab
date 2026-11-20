@@ -1,4 +1,4 @@
-<section class="mode-card formal" data-ai-playground data-ai-mode="formal">
+<section class="mode-card formal" data-ai-playground>
 <div class="mode-card-heading"><span class="icon-tile mint"><%- icon('document') %></span><h2>正式測驗</h2><p>涵蓋八個主題，以題庫題目與 AI 新題完整檢驗資訊能力。</p></div>
 <div class="mode-card-body">
 <div class="mode-specs"><div><strong>50</strong><small>測驗題數</small></div><div><strong>90 <small>分鐘</small></strong><small>合格時間上限</small></div><div><strong>8 <small>科</small></strong><small>完整主題範圍</small></div></div>
@@ -6,14 +6,13 @@
 <form action="/exams/formal/start" method="POST" data-ai-generate data-confirm-exam-end="<%= hasActiveExam ? '新考卷準備完成後，尚未完成的考卷會先交卷，未答題算錯。確定要開始正式測驗嗎？' : '' %>">
 <input type="hidden" name="_token" value="<%= csrf %>">
 <fieldset class="ai-exam-settings" data-ai-settings><legend>本次測驗範圍</legend>
-<input type="hidden" name="amount" value="50"><% for(const bank of aiBanks) { %><input type="hidden" name="banks[]" value="<%= bank.id %>"><% } %>
-<p class="form-note"><%= aiBanks.map(bank=>bank.name).join('、') %></p>
+<p class="form-note"><%= questionBanks.map(bank=>bank.name).join('、') %></p>
 </fieldset>
 <button type="submit" class="button" data-ai-button>準備正式考卷 <%- icon('arrow') %></button>
 <p class="form-note">準備考卷可能需要數分鐘。離開準備頁會取消尚未完成的出題；作答後離開測驗頁面則會自動交卷。</p>
 </form>
 <div class="ai-generation-progress" data-ai-progress hidden><ol aria-label="正式考卷準備階段">
-<li data-ai-stage="preparing" data-state="waiting">分配與抽題</li><li data-ai-stage="generating" data-state="waiting">生成 20 題新題</li><li data-ai-stage="validating" data-state="waiting">檢查內容與考點</li><li data-ai-stage="complete" data-state="waiting">開始測驗</li>
+<li data-ai-stage="preparing" data-state="waiting">分配與抽題</li><li data-ai-stage="generating" data-state="waiting">生成 5 題新題</li><li data-ai-stage="validating" data-state="waiting">檢查內容與考點</li><li data-ai-stage="complete" data-state="waiting">開始測驗</li>
 </ol></div>
 <p class="ai-generation-elapsed" data-ai-elapsed aria-live="off" hidden></p>
 <p data-ai-status role="status" aria-live="polite"></p><p data-ai-error role="alert" hidden></p>

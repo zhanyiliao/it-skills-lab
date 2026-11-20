@@ -1,4 +1,4 @@
-<label>題庫<select name="bank_code"><% for(const item of aiBanks){ %><option value="<%= item.code %>" <%= (question?.bank_code??bankId)===item.code?'selected':'' %>><%= item.name %></option><% } %></select></label>
+<label>題庫<select name="bank_code"><% for(const item of questionBanks){ %><option value="<%= item.code %>" <%= (question?.bank_code??bankId)===item.code?'selected':'' %>><%= item.name %></option><% } %></select></label>
 <label>難度（1～9 星）<input type="number" name="difficulty" min="1" max="9" value="<%= question?.difficulty??4 %>" required></label>
 <label>檢核狀態<select name="review_status"><% for(const [value,label] of Object.entries(statuses)){ %><option value="<%= value %>" <%= (question?.review_status??'pending')===value?'selected':'' %>><%= label %></option><% } %></select></label>
 <% for(const [field,label] of [['question','題目敘述'],['A','A 選項'],['B','B 選項'],['C','C 選項'],['D','D 選項'],['explanation','解析']]){ %>

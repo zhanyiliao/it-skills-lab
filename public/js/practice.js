@@ -1,15 +1,15 @@
 (() => {
   const panel=document.querySelector('[data-practice-settings]');
   if(!panel)return;
-  const form=panel.querySelector('[data-practice-start]'), button=panel.querySelector('[data-ai-button]');
-  const error=panel.querySelector('[data-ai-error]'), status=panel.querySelector('[data-ai-status]');
+  const form=panel.querySelector('[data-practice-start]'), button=panel.querySelector('[data-practice-button]');
+  const error=panel.querySelector('[data-practice-error]'), status=panel.querySelector('[data-practice-status]');
   const inputs=()=>[...panel.querySelectorAll('input[name="banks[]"]')];
   let pending=false;
-  for(const action of panel.querySelectorAll('[data-ai-bank-selection]')){
+  for(const action of panel.querySelectorAll('[data-practice-bank-selection]')){
     action.hidden=false;
     action.addEventListener('click',()=>{
       if(pending)return;
-      const checked=action.dataset.aiBankSelection==='all';
+      const checked=action.dataset.practiceBankSelection==='all';
       for(const input of inputs())input.checked=checked;
       if(checked)error.hidden=true;
     });

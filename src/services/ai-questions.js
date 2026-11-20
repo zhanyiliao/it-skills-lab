@@ -1,3 +1,4 @@
+import { difficultyMax } from './difficulty.js';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -6,7 +7,7 @@ import { randomUUID } from 'node:crypto';
 import { config } from '../config.js';
 import { root, runtime } from '../paths.js';
 import { fail, options } from '../support.js';
-import { aiBanks, planQuestions, aiDifficultyMax } from './ai-banks.js';
+import { questionBanks } from './question-banks.js';
 
 const schema = path.join(root, 'src/schemas/generated-questions.json');
 const promptFile = path.join(root, 'prompts/ai-exam.md');
@@ -39,7 +40,7 @@ export function validateQuestions(value, plan) {
   const validText = (text, length) => typeof text === 'string' && text.trim().length > 0 && text.length <= length;
   if (!Array.isArray(plan) || plan.length !== 5 || !value || !Array.isArray(value.questions) || value.questions.length !== 5) fail(502, '出題結果不完整，請重新產生。');
   const questions = value.questions.map(q => {
-    if (!q || !Number.isInteger(q.difficulty) || q.difficulty < 1 || q.difficulty > aiDifficultyMax || !aiBanks.some(bank => bank.id === q.bank) ||
+    if (!q || !Number.isInteger(q.difficulty) || q.difficulty < 1 || q.difficulty > difficultyMax || !questionBanks.some(bank => bank.id === q.bank) ||
         !validText(q.question, 600) || !validText(q.explanation, 1000) || !q.options ||
         !options.every(option => validText(q.options[option], 300)) || !options.includes(q.answer) ||
         new Set(options.map(option => q.options[option].trim())).size !== 4) fail(502, '出題結果格式不正確，請重新產生。');
@@ -95,14 +96,11 @@ async function runCodex(signal,onProgress,task){
  }
 export class CodexQuestionGenerator {
   constructor(run = runCodex) { this.run = run; this.busy = false; }
-  async generate({ amount = 10, banks = ['programming'], signal, onProgress = () => {} } = {}) {
-    return this.generatePlanned({ plans: planQuestions(amount, banks), banks, signal, onProgress });
-  }
   async generatePlanned({ plans, banks, signal, onProgress = () => {}, rules, context = '', avoidQuestions = [] }) {
     const flat = Array.isArray(plans) ? plans.flat() : [], amount = flat.length;
     if (!Array.isArray(plans) || !plans.length || amount > 50 || plans.some(plan => !Array.isArray(plan) || plan.length !== 5) ||
-      !Array.isArray(banks) || flat.some(item => !banks.includes(item.bank) || !aiBanks.some(bank => bank.id === item.bank) ||
-        !Number.isInteger(item.difficulty) || item.difficulty < 1 || item.difficulty > aiDifficultyMax))
+      !Array.isArray(banks) || flat.some(item => !banks.includes(item.bank) || !questionBanks.some(bank => bank.id === item.bank) ||
+        !Number.isInteger(item.difficulty) || item.difficulty < 1 || item.difficulty > difficultyMax))
       fail(422, '出題分配表不正確。');
     if (this.busy) fail(429, '目前有考卷正在產生，請稍後再試。');
     this.busy = true;
@@ -111,7 +109,7 @@ export class CodexQuestionGenerator {
       onProgress('preparing', { completed: 0, total: amount });
       if (rules === undefined) {
         const common = await loadQuestionPrompt();
-        const subjects = await Promise.all(aiBanks.filter(bank => banks.includes(bank.id)).map(async bank =>
+        const subjects = await Promise.all(questionBanks.filter(bank => banks.includes(bank.id)).map(async bank =>
           '## 題庫：' + bank.id + '（' + bank.name + '）\n' + await loadQuestionPrompt(path.join(root, 'prompts', bank.prompt))));
         rules = common + '\n\n' + subjects.join('\n\n');
       }

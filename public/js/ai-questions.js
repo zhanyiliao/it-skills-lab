@@ -1,7 +1,6 @@
 (() => {
     const panel = document.querySelector('[data-ai-playground]');
     if (!panel) return;
-    const formal = panel.dataset.aiMode === 'formal';
     const form = panel.querySelector('[data-ai-generate]');
     const button = panel.querySelector('[data-ai-button]');
     const settings = panel.querySelector('[data-ai-settings]');
@@ -12,21 +11,12 @@
     const steps = [...panel.querySelectorAll('[data-ai-stage]')];
     const stages = ['preparing', 'generating', 'validating', 'complete'];
     const messages = {
-        preparing: formal ? '分配八科題數並抽選 30 題…' : '準備出題規則…',
+        preparing: '分配八科題數並抽選 45 題…',
         generating: 'AI 正在產生題目與解析，請稍候…',
-        validating: formal ? '檢查新題正確性與細節考點，並建立考卷…' : '檢查題數、格式與難度，並建立考卷…',
+        validating: '檢查新題正確性與細節考點，並建立考卷…',
         complete: '考卷已準備好，正在開啟測驗…',
     };
     let pending = false, controller = null, currentStage = -1, timer;
-    for (const action of panel.querySelectorAll('[data-ai-bank-selection]')) {
-        action.hidden = false;
-        action.addEventListener('click', () => {
-            if (pending || settings.disabled) return;
-            const checked = action.dataset.aiBankSelection === 'all';
-            for (const input of settings.querySelectorAll('input[name="banks[]"]')) input.checked = checked;
-            if (checked) error.hidden = true;
-        });
-    }
     function stage(value, counts = {}) {
         const index = stages.indexOf(value);
         if (index < currentStage || index < 0) return;
@@ -34,7 +24,7 @@
         status.textContent = value === 'generating' && Number.isInteger(counts.completed) && Number.isInteger(counts.total) &&
             counts.completed >= 0 && counts.completed <= counts.total
             ? 'AI 正在出題，已完成 ' + counts.completed + '／' + counts.total + ' 題…' : messages[value];
-        if (formal && value === 'validating' && counts.retrying)
+        if (value === 'validating' && counts.retrying)
             status.textContent = '部分新題正在重新生成，完成後會再次檢查考點與內容…';
         steps.forEach((step, i) => {
             step.dataset.state = i < index || value === 'complete' ? 'done' : i === index ? 'current' : 'waiting';
@@ -88,11 +78,6 @@
         event.preventDefault();
         if (pending) return;
         const body = new URLSearchParams(new FormData(form));
-        if (!body.getAll('banks[]').length) {
-            error.textContent = '請至少選擇一個 AI 題庫。';
-            error.hidden = false;
-            return;
-        }
         pending = true;
         controller = new AbortController();
         currentStage = -1;

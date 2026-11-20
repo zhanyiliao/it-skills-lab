@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import mysql from 'mysql2/promise';
 import { CodexQuestionGenerator, validateQuestions } from '../src/services/ai-questions.js';
-import { aiBanks, planQuestions } from '../src/services/ai-banks.js';
+import { questionBanks, planQuestions } from '../src/services/question-banks.js';
 import {setupDatabase} from '../src/setup.js';
 import { config } from '../src/config.js';
 import {questionContentHash} from '../src/services/question-content.js';
@@ -14,7 +14,7 @@ const hash = value => createHash('sha256').update(value).digest('hex');
 const directory = path.join(runtime, 'question-bank-build');
 await fs.mkdir(directory, { recursive: true });
 const common = await fs.readFile(path.join(root, 'prompts/ai-exam.md'), 'utf8');
-const subjects = await Promise.all(aiBanks.map(bank => fs.readFile(path.join(root, 'prompts', bank.prompt), 'utf8')));
+const subjects = await Promise.all(questionBanks.map(bank => fs.readFile(path.join(root, 'prompts', bank.prompt), 'utf8')));
 const version = hash(common + subjects.join('\n'));
 const manifestFile = path.join(directory, 'manifest.json');
 let manifest;
@@ -23,14 +23,14 @@ catch (error) { if (error.code !== 'ENOENT') throw error; }
 if (manifest && manifest.version !== version) throw Error('Prompt changed; archive the previous build directory before starting a new build.');
 if (!manifest) {
   manifest = { version, batch: 'bootstrap-' + Date.now(), createdAt: Math.floor(Date.now()/1000),
-    plans: Object.fromEntries(aiBanks.map(bank => [bank.id, planQuestions(50, [bank.id])])) };
+    plans: Object.fromEntries(questionBanks.map(bank => [bank.id, planQuestions(50, [bank.id])])) };
   await fs.writeFile(manifestFile, JSON.stringify(manifest, null, 2), { flag: 'wx' });
 }
 let completed = 0, nextBank = 0;
 const result = new Map();
 const normalize = text => text.normalize('NFKC').replace(/\s+/gu, '').toLowerCase();
 async function generateBank(index) {
-  const bank = aiBanks[index], questions = [];
+  const bank = questionBanks[index], questions = [];
   const run = new CodexQuestionGenerator().run;
   for (const [batchIndex, plan] of manifest.plans[bank.id].entries()) {
     const checkpoint = path.join(directory, bank.id + '-' + batchIndex + '.json');
@@ -59,13 +59,13 @@ async function generateBank(index) {
   result.set(bank.id, questions);
 }
 await Promise.all(Array.from({length:4}, async () => {
-  while (nextBank < aiBanks.length) { const index = nextBank++; await generateBank(index); }
+  while (nextBank < questionBanks.length) { const index = nextBank++; await generateBank(index); }
 }));
-const questions = aiBanks.flatMap(bank => result.get(bank.id));
+const questions = questionBanks.flatMap(bank => result.get(bank.id));
 if (questions.length !== 400 || new Set(questions.map(q=>normalize(q.question))).size!==400) throw Error('Expected 400 unique questions');
 const columns = ['bank_code','question','A','B','C','D','answer','explanation','difficulty','review_status',
  'appearance_count','correct_count','unanswered_count','content_hash','generator','prompt_version','generation_batch','created_at'];
-const rows = questions.map(q=>[aiBanks.find(bank=>bank.id===q.bank).code,q.question,q.options.A,q.options.B,q.options.C,q.options.D,q.answer,q.explanation,q.difficulty,
+const rows = questions.map(q=>[questionBanks.find(bank=>bank.id===q.bank).code,q.question,q.options.A,q.options.B,q.options.C,q.options.D,q.answer,q.explanation,q.difficulty,
  'pending',0,0,0,questionContentHash(q),
  'codex-cli',version,manifest.batch,manifest.createdAt]);
 if(new Set(rows.map(row=>row[13])).size!==400)throw Error('Duplicate content hash');

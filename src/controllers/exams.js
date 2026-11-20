@@ -1,7 +1,6 @@
-import {weightedScore} from '../services/scoring.js';
 import { integer, fail, pager } from '../support.js';
 import { withSessionLock } from '../session-store.js';
-import { bankPerformance } from '../services/scoring.js';
+import { bankPerformance, weightedScore } from '../services/scoring.js';
 import { practiceReviewSummary } from '../services/practice-review.js';
 
 export function examsController(exams, records, active, practiceQuestions) {

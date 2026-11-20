@@ -1,4 +1,4 @@
--- IT Skills Lab: current application schema.
+-- IT Skills Lab: application schema.
 SET NAMES utf8mb4;
 
 CREATE TABLE IF NOT EXISTS user (
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS user (
   UNIQUE KEY user_username_unique (username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Original question bank for practice and daily questions. Codes are defined in src/services/ai-banks.js.
+-- Shared question bank for formal exams, practice and daily questions. Codes are defined in src/services/question-banks.js.
 CREATE TABLE IF NOT EXISTS questions (
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
  bank_code TINYINT UNSIGNED NOT NULL,

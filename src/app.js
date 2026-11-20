@@ -22,7 +22,7 @@ import { examsController } from './controllers/exams.js';
 import { RecordRepository } from './services/records.js';
 import { CodexQuestionGenerator } from './services/ai-questions.js';
 import { aiQuestionsController } from './controllers/ai-questions.js';
-import { aiBanks, aiAmounts } from './services/ai-banks.js';
+import { questionBanks, practiceAmounts } from './services/question-banks.js';
 import { managementController } from './controllers/management.js';
 
 export function createApp({ pool, secret = config.secret, sessionStore, disableRateLimits = false, questionGenerator = new CodexQuestionGenerator() } = {}) {
@@ -73,20 +73,20 @@ export function createApp({ pool, secret = config.secret, sessionStore, disableR
     };
     next();
   });
-  const questions = new QuestionRepository(pool), practiceQuestions = questions;
-  const hybrid = new HybridExamService(practiceQuestions, questionGenerator);
+  const questions = new QuestionRepository(pool);
+  const hybrid = new HybridExamService(questions, questionGenerator);
   const exams = new ExamService(pool, hybrid), records = new RecordRepository(pool);
-  const daily = new DailyQuestionService(practiceQuestions, secret);
+  const daily = new DailyQuestionService(questions, secret);
   const active = new ActiveExamService(pool, exams);
   app.locals.activeExams = active;
-  const auth = authController(pool, active), pages = pagesController(pool, daily, records), exam = examsController(exams, records, active, practiceQuestions), management = managementController(pool, questions);
+  const auth = authController(pool, active), pages = pagesController(pool, daily, records), exam = examsController(exams, records, active, questions), management = managementController(pool, questions);
   const authLimit = rateLimit({ windowMs: 60000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false,
     message: { message: '嘗試次數過多，請稍後再試。' }, skip: () => disableRateLimits });
   const aiLimit = rateLimit({ windowMs: 600000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false,
     message: { message: '產生次數較多，請稍後再試。' }, skip: () => disableRateLimits });
   app.post('/exams/formal/start', requireRole(0), aiLimit, aiQuestionsController(active, options => hybrid.prepare(options)));
   app.get('/', pages.home);
-  app.get('/about', (req, res) => res.page('pages/about', { title: '關於 IT Skills Lab', aiBanks, aiAmounts }));
+  app.get('/about', (req, res) => res.page('pages/about', { title: '關於 IT Skills Lab', questionBanks, practiceAmounts }));
   app.get('/leaderboard', pages.leaderboard);
   app.get('/account/:id', pages.profile);
   app.get('/members/:id', (req,res)=>res.redirect(301,'/account/'+encodeURIComponent(req.params.id)));
@@ -98,7 +98,7 @@ export function createApp({ pool, secret = config.secret, sessionStore, disableR
   app.get('/account', requireRole(0), (req,res)=>res.set('Cache-Control','no-store').redirect('/account/'+req.user.identity));
   app.get('/logout', requireRole(0), async (req, res) => res.page('auth/logout', { title: '確認登出', hasActiveExam: await active.hasPending(req.user.identity) }));
   app.post('/logout', requireRole(0), auth.logout);
-  app.get('/exams', requireRole(0), async (req, res) => res.page('exams/choose', { title: '選擇應試類型', hasActiveExam: await active.hasPending(req.user.identity), aiBanks, aiAmounts }));
+  app.get('/exams', requireRole(0), async (req, res) => res.page('exams/choose', { title: '選擇應試類型', hasActiveExam: await active.hasPending(req.user.identity), questionBanks, practiceAmounts }));
   app.post('/exams/practice/start', requireRole(0), exam.startPractice);
   app.get('/exams/current', requireRole(0), exam.show);
   app.post('/exams/submit', requireRole(0), exam.submit);

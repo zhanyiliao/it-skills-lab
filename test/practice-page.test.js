@@ -5,12 +5,12 @@ import vm from 'node:vm';
 const source=fs.readFileSync(new URL('../public/js/practice.js',import.meta.url),'utf8');
 function page(){
   const events=new Map(),inputs=Array.from({length:8},()=>({checked:true})),actions=['all','none'].map(value=>({
-    dataset:{aiBankSelection:value},hidden:true,addEventListener(name,handler){this.click=handler;},
+    dataset:{practiceBankSelection:value},hidden:true,addEventListener(name,handler){this.click=handler;},
   }));
   const form={attributes:{},addEventListener(name,handler){this.submit=handler;},setAttribute(k,v){this.attributes[k]=v;},removeAttribute(k){delete this.attributes[k];}};
   const button={disabled:false},error={hidden:true},status={textContent:''};
-  const selectors=new Map([['[data-practice-start]',form],['[data-ai-button]',button],['[data-ai-error]',error],['[data-ai-status]',status]]);
-  const panel={querySelector:s=>selectors.get(s),querySelectorAll:s=>s==='[data-ai-bank-selection]'?actions:inputs};
+  const selectors=new Map([['[data-practice-start]',form],['[data-practice-button]',button],['[data-practice-error]',error],['[data-practice-status]',status]]);
+  const panel={querySelector:s=>selectors.get(s),querySelectorAll:s=>s==='[data-practice-bank-selection]'?actions:inputs};
   vm.runInNewContext(source,{document:{querySelector:()=>panel},window:{addEventListener:(name,handler)=>events.set(name,handler)}});
   return {form,button,error,status,inputs,actions,events,submit(extra={}){const event={defaultPrevented:false,preventDefault(){this.defaultPrevented=true;},...extra};form.submit(event);return event;}};
 }
